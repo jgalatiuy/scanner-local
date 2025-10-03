@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Scanner Local - Escanear Código</title>
+  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 14px; }
+    h1 { font-size: 1.2rem; margin-bottom: 8px; }
+    #reader { width: 100%; max-width: 420px; margin: 8px auto; }
+    #code { width: 100%; padding: 8px; font-size: 1rem; margin-top: 8px; box-sizing: border-box; }
+    .btn { display:inline-block; margin-top:8px; padding:10px 14px; border-radius:6px;
+          background:#3366ff; color:#fff; border:none; font-weight:600; cursor:pointer; }
+    .btn.secondary { background:#4caf50; margin-left:8px; }
+    .note { margin-top:10px; color:#666; font-size:0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>Escanear código (móvil)</h1>
+
+  <div id="reader" style="display:none;"></div>
+
+  <input id="code" placeholder="Aquí aparece el código (o escribí manualmente)" />
+
+  <div>
+    <button id="btnToggle" class="btn">Iniciar Escáner</button>
+    <button id="btnSend" class="btn secondary">Enviar a la app</button>
+  </div>
+
+  <p class="note">Si tu escáner físico escribe como teclado, enfocá el campo y escaneá. La cámara funciona en HTTPS (esta página corre en GitHub Pages).</p>
+
+<script>
+  // --- CONFIG: poné tu IP / path aquí ---
+  const TARGET_HOST = "http://192.168.4.104/Default.aspx"; // <-- reemplazar si necesario
+  // ------------------------------------
+
+  let scanner = null;
+  let running = false;
+  const reader = document.getElementById('reader');
+  const inputCode = document.getElementById('code');
+  const btnToggle = document.getElementById('btnToggle');
+  const btnSend = document.getElementById('btnSend');
+
+  function onScanSuccess(decodedText, decodedResult) {
+    inputCode.value = decodedText;
+    // si querés que se cierre después del primer scan, descomentá:
+    stopScanner();
+  }
+
+  function startScanner(){
+    if(!scanner) scanner = new Html5Qrcode("reader");
+    reader.style.display = "block";
+    scanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, onScanSuccess)
+      .then(()=> { running=true; btnToggle.textContent = "Detener Escáner"; })
+      .catch(err=> {
+        console.error("Error arrancando cámara:", err);
+        alert("Error iniciando la cámara: " + err);
+      });
+  }
+
+  function stopScanner(){
+    if(scanner && running){
+      scanner.stop().then(()=> {
+        reader.style.display = "none";
+        running=false;
+        btnToggle.textContent = "Iniciar Escáner";
+      }).catch(e=> console.error(e));
+    } else {
+      reader.style.display = "none";
+      running = false;
+      btnToggle.textContent = "Iniciar Escáner";
+    }
+  }
+
+  btnToggle.addEventListener('click', () => {
+    if(running) stopScanner(); else startScanner();
+  });
+
+  btnSend.addEventListener('click', () => {
+    const code = inputCode.value.trim();
+    if(!code){ alert("No hay código para enviar"); return; }
+    // redirigir a la app ASP.NET pasando el código en querystring
+    // usa la IP que definiste arriba
+    const url = TARGET_HOST + "?codigo=" + encodeURIComponent(code);
+    // abrir en la misma pestaña:
+    window.location.href = url;
+    // si querés abrir en nueva pestaña, usá: window.open(url, '_blank');
+  });
+</script>
+</body>
+</html>
