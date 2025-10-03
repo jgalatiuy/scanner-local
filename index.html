@@ -23,7 +23,7 @@
   <script>
     // Tomar URL de retorno desde ?return=...
     const params = new URLSearchParams(location.search);
-    const returnUrl = params.get('return') || 'http://192.168.4.104/Default.aspx'; // fallback por las dudas
+    const returnUrl = params.get('return') || 'http://192.168.4.104/feria'; // fallback por las dudas
 
     let scanner = null, running = false;
     document.getElementById('btnStart').addEventListener('click', startScanner);
@@ -52,6 +52,7 @@
   </script>
 </body>
 </html>
+
 
 
 
