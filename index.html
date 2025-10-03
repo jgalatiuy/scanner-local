@@ -3,30 +3,84 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Escáner de barras</title>
-  <!-- Librería fija desde unpkg -->
+  <title>Escanear código</title>
+  <!-- Librería desde unpkg con versión fija -->
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
+    #reader {
+      width: 100%;
+      max-width: 420px;
+      margin: 20px auto;
+    }
+    button {
+      background: #3366ff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #003399;
+    }
+  </style>
 </head>
 <body>
   <h3>Escanear código</h3>
-  <div id="reader" style="width:300px; margin:auto;"></div>
+  <button id="btnStart">Iniciar escáner</button>
+  <div id="reader"></div>
 
   <script>
-    function onScanSuccess(decodedText, decodedResult) {
-      alert("Leído: " + decodedText);
-    }
+    // Usar return del querystring o fijo a /feria/Default.aspx
+    const params = new URLSearchParams(window.location.search);
+    const returnUrl = params.get("return") || "http://192.168.4.104/feria/Default.aspx";
 
-    window.addEventListener("load", () => {
-      let scanner = new Html5QrcodeScanner(
-        "reader",
-        { fps: 10, qrbox: 250, formatsToSupport: [
+    let scanner = null;
+    let running = false;
+
+    document.getElementById("btnStart").addEventListener("click", function () {
+      if (!scanner) {
+        scanner = new Html5Qrcode("reader");
+      }
+      scanner.start(
+        { facingMode: "environment" },
+        {
+          fps: 10,
+          qrbox: 250,
+          formatsToSupport: [
             Html5QrcodeSupportedFormats.CODE_128,
             Html5QrcodeSupportedFormats.EAN_13,
             Html5QrcodeSupportedFormats.UPC_A
-        ] }
-      );
-      scanner.render(onScanSuccess);
+          ]
+        },
+        (decodedText) => {
+          stopScanner();
+          const sep = returnUrl.includes("?") ? "&" : "?";
+          window.location.href = returnUrl + sep + "codigo=" + encodeURIComponent(decodedText);
+        },
+        (errorMessage) => {
+          // errores de lectura se pueden ignorar
+        }
+      ).then(() => {
+        running = true;
+      }).catch(err => {
+        alert("Error iniciando cámara: " + err);
+      });
     });
+
+    function stopScanner() {
+      if (scanner && running) {
+        scanner.stop().then(() => { running = false; });
+      }
+    }
   </script>
 </body>
 </html>
