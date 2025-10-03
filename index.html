@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Escáner de barras</title>
-  <!-- jsDelivr en lugar de unpkg -->
+  <!-- Librería fija desde unpkg -->
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 </head>
 <body>
@@ -16,7 +16,6 @@
       alert("Leído: " + decodedText);
     }
 
-    // Iniciar al cargar
     window.addEventListener("load", () => {
       let scanner = new Html5QrcodeScanner(
         "reader",
@@ -31,10 +30,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
