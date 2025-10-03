@@ -3,24 +3,59 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Scanner Test</title>
-  <!-- Librería html5-qrcode (forzado con ?v=1 para evitar cache) -->
-  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js?v=1"></script>
+  <title>Escáner Local</title>
+  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js?v=2"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
+    #reader { width: 100%; max-width: 400px; margin: 20px auto; }
+    button {
+      background: #3366ff; color: #fff; border: none; border-radius: 6px;
+      padding: 10px 16px; font-size: 1rem; font-weight: 600; cursor: pointer;
+    }
+    button:hover { background:#003399; }
+  </style>
 </head>
 <body>
-  <h3>Prueba de cámara</h3>
-  <div id="reader" style="width:300px; margin:auto;"></div>
+  <h3>Escanear código</h3>
+  <button onclick="startScanner()">Iniciar escáner</button>
+  <div id="reader"></div>
 
   <script>
-    function onScanSuccess(decodedText, decodedResult) {
-      alert("Código leído: " + decodedText);
+    let scanner = null;
+    let running = false;
+
+    function startScanner() {
+      if (!scanner) {
+        scanner = new Html5Qrcode("reader");
+      }
+      scanner.start(
+        { facingMode: "environment" }, // cámara trasera
+        { fps: 10, qrbox: 250 },
+        (decodedText, decodedResult) => {
+          stopScanner();
+          // Redirigir directo a tu app ASP.NET con el código leído
+          const target = "http://192.168.4.104/Default.aspx?codigo=" + encodeURIComponent(decodedText);
+          window.location.href = target;
+        },
+        (errorMessage) => {
+          // Errores de escaneo (se pueden ignorar)
+        }
+      ).then(() => {
+        running = true;
+      }).catch((err) => {
+        alert("Error iniciando la cámara: " + err);
+      });
     }
 
-    // Crear y renderizar el escáner
-    let html5QrcodeScanner = new Html5QrcodeScanner(
-      "reader", { fps: 10, qrbox: 250 }
-    );
-    html5QrcodeScanner.render(onScanSuccess);
+    function stopScanner() {
+      if (scanner && running) {
+        scanner.stop().then(() => {
+          running = false;
+        });
+      }
+    }
   </script>
 </body>
 </html>
+
+
