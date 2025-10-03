@@ -3,11 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Escanear y volver</title>
-  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js?v=3"></script>
+  <title>Escanear código</title>
+  <!-- librería -->
+  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
-    #reader { width: 100%; max-width: 420px; margin: 20px auto; }
+    #reader { width: 100%; max-width: 400px; margin: 20px auto; }
     button {
       background:#3366ff; color:#fff; border:none; border-radius:6px;
       padding:10px 16px; font-size:1rem; font-weight:600; cursor:pointer;
@@ -21,41 +22,21 @@
   <div id="reader"></div>
 
   <script>
-    // Leer a dónde volver desde ?return=...
-    const params = new URLSearchParams(window.location.search);
-    const returnUrl = params.get("return") || "http://192.168.4.104/Feria/Default.aspx";
-
-    let scanner = null;
-    let running = false;
-
+    // Enganchar el click del botón
     document.getElementById("btnStart").addEventListener("click", function() {
-      if (!scanner) {
-        scanner = new Html5Qrcode("reader");
-      }
+      const scanner = new Html5Qrcode("reader");
       scanner.start(
         { facingMode: "environment" },
         { fps: 10, qrbox: 250 },
         (decodedText) => {
-          stopScanner();
-          // Volver al ASPX con el código leído
-          const sep = returnUrl.includes("?") ? "&" : "?";
-          window.location.href = returnUrl + sep + "codigo=" + encodeURIComponent(decodedText);
+          alert("Código leído: " + decodedText);
         },
         (errorMessage) => {
-          // errores de lectura, se pueden ignorar
+          // errores de escaneo (se ignoran)
         }
-      ).then(() => {
-        running = true;
-      }).catch((err) => {
-        alert("Error iniciando cámara: " + err);
-      });
+      ).catch(err => alert("Error al iniciar cámara: " + err));
     });
-
-    function stopScanner() {
-      if (scanner && running) {
-        scanner.stop().then(() => { running = false; });
-      }
-    }
   </script>
 </body>
 </html>
+
