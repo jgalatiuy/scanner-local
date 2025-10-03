@@ -1,61 +1,58 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Escáner Local</title>
+  <title>Escanear y Volver</title>
   <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js?v=2"></script>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
-    #reader { width: 100%; max-width: 400px; margin: 20px auto; }
+    #reader { width: 100%; max-width: 420px; margin: 20px auto; }
     button {
-      background: #3366ff; color: #fff; border: none; border-radius: 6px;
-      padding: 10px 16px; font-size: 1rem; font-weight: 600; cursor: pointer;
+      background:#3366ff; color:#fff; border:none; border-radius:6px;
+      padding:10px 16px; font-size:1rem; font-weight:600; cursor:pointer;
     }
     button:hover { background:#003399; }
   </style>
 </head>
 <body>
   <h3>Escanear código</h3>
-  <button onclick="startScanner()">Iniciar escáner</button>
+  <button id="btnStart">Iniciar escáner</button>
   <div id="reader"></div>
 
   <script>
-    let scanner = null;
-    let running = false;
+    // Tomar URL de retorno desde ?return=...
+    const params = new URLSearchParams(location.search);
+    const returnUrl = params.get('return') || 'http://192.168.4.104/Default.aspx'; // fallback por las dudas
+
+    let scanner = null, running = false;
+    document.getElementById('btnStart').addEventListener('click', startScanner);
 
     function startScanner() {
-      if (!scanner) {
-        scanner = new Html5Qrcode("reader");
-      }
+      if (!scanner) scanner = new Html5Qrcode("reader");
       scanner.start(
-        { facingMode: "environment" }, // cámara trasera
+        { facingMode: "environment" },
         { fps: 10, qrbox: 250 },
-        (decodedText, decodedResult) => {
+        (decodedText) => {
           stopScanner();
-          // Redirigir directo a tu app ASP.NET con el código leído
-          const target = "http://192.168.4.104/Default.aspx?codigo=" + encodeURIComponent(decodedText);
-          window.location.href = target;
+          // Volver al .aspx con ?codigo=...
+          const sep = returnUrl.includes('?') ? '&' : '?';
+          window.location.href = returnUrl + sep + 'codigo=' + encodeURIComponent(decodedText);
         },
-        (errorMessage) => {
-          // Errores de escaneo (se pueden ignorar)
-        }
-      ).then(() => {
-        running = true;
-      }).catch((err) => {
-        alert("Error iniciando la cámara: " + err);
-      });
+        () => {}
+      ).then(()=> running = true)
+       .catch(err => alert("No se pudo iniciar la cámara: " + err));
     }
 
     function stopScanner() {
       if (scanner && running) {
-        scanner.stop().then(() => {
-          running = false;
-        });
+        scanner.stop().then(()=> running = false);
       }
     }
   </script>
 </body>
 </html>
+
+
 
 
