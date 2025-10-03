@@ -4,24 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Escáner de barras</title>
-  <!-- Importante: la librería se carga primero -->
-  <script src="https://unpkg.com/html5-qrcode/html5-qrcode.min.js"></script>
+  <!-- jsDelivr en lugar de unpkg -->
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
 </head>
 <body>
-  <h3>Escanear código2</h3>
+  <h3>Escanear código</h3>
   <div id="reader" style="width:300px; margin:auto;"></div>
 
   <script>
-    // Confirmar que la librería cargó
-    console.log("Html5QrcodeScanner =", typeof Html5QrcodeScanner);
-
     function onScanSuccess(decodedText, decodedResult) {
       alert("Leído: " + decodedText);
     }
 
-    // Crear el scanner solo cuando la librería ya está
+    // Iniciar al cargar
     window.addEventListener("load", () => {
-      let html5QrcodeScanner = new Html5QrcodeScanner(
+      let scanner = new Html5QrcodeScanner(
         "reader",
         { fps: 10, qrbox: 250, formatsToSupport: [
             Html5QrcodeSupportedFormats.CODE_128,
@@ -29,14 +26,11 @@
             Html5QrcodeSupportedFormats.UPC_A
         ] }
       );
-      html5QrcodeScanner.render(onScanSuccess);
+      scanner.render(onScanSuccess);
     });
   </script>
 </body>
 </html>
-
-
-
 
 
 
