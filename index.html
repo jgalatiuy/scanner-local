@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Scanner Test</title>
-  <!-- Librería html5-qrcode (forzado con ?v=1 para evitar cache) -->
-  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js?v=1"></script>
+  <title>Escanear código</title>
+  <!-- La librería va SIEMPRE antes de usar Html5QrcodeScanner -->
+  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
 </head>
 <body>
-  <h3>Prueba de cámara</h3>
+  <h3>Escanear código</h3>
   <div id="reader" style="width:300px; margin:auto;"></div>
 
   <script>
@@ -16,14 +16,18 @@
       alert("Código leído: " + decodedText);
     }
 
-    // Crear y renderizar el escáner
-    let html5QrcodeScanner = new Html5QrcodeScanner(
-      "reader", { fps: 10, qrbox: 250 }
-    );
+    // Recién acá usamos la clase, cuando ya cargó
+let html5QrcodeScanner = new Html5QrcodeScanner(
+  "reader",
+  { fps: 10, qrbox: 250, formatsToSupport: [ Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.UPC_A ] }
+);
+
     html5QrcodeScanner.render(onScanSuccess);
   </script>
 </body>
 </html>
+
+
 
 
 
