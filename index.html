@@ -4,24 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Scanner Test</title>
-  <!-- Usa el path correcto de la librería -->
-  <script src="https://unpkg.com/html5-qrcode/html5-qrcode.min.js"></script>
+  <!-- Librería html5-qrcode (forzado con ?v=1 para evitar cache) -->
+  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js?v=1"></script>
 </head>
 <body>
   <h3>Prueba de cámara</h3>
-  <div id="reader" style="width:300px"></div>
+  <div id="reader" style="width:300px; margin:auto;"></div>
 
   <script>
     function onScanSuccess(decodedText, decodedResult) {
       alert("Código leído: " + decodedText);
     }
 
+    // Crear y renderizar el escáner
     let html5QrcodeScanner = new Html5QrcodeScanner(
-        "reader", { fps: 10, qrbox: 250 });
+      "reader", { fps: 10, qrbox: 250 }
+    );
     html5QrcodeScanner.render(onScanSuccess);
   </script>
 </body>
 </html>
-
-
-
