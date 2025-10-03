@@ -3,40 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Escanear código</title>
-  <!-- librería -->
+  <title>Scanner Test</title>
   <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
-    #reader { width: 100%; max-width: 400px; margin: 20px auto; }
-    button {
-      background:#3366ff; color:#fff; border:none; border-radius:6px;
-      padding:10px 16px; font-size:1rem; font-weight:600; cursor:pointer;
-    }
-    button:hover { background:#003399; }
-  </style>
 </head>
 <body>
-  <h3>Escanear código</h3>
-  <button id="btnStart">Iniciar escáner</button>
-  <div id="reader"></div>
+  <h3>Prueba de cámara</h3>
+  <div id="reader" style="width:300px; margin:auto;"></div>
 
   <script>
-    // Enganchar el click del botón
-    document.getElementById("btnStart").addEventListener("click", function() {
-      const scanner = new Html5Qrcode("reader");
-      scanner.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
-        (decodedText) => {
-          alert("Código leído: " + decodedText);
-        },
-        (errorMessage) => {
-          // errores de escaneo (se ignoran)
-        }
-      ).catch(err => alert("Error al iniciar cámara: " + err));
-    });
+    function onScanSuccess(decodedText, decodedResult) {
+      alert("Código leído: " + decodedText);
+    }
+
+    let html5QrcodeScanner = new Html5QrcodeScanner(
+      "reader", { fps: 10, qrbox: 250 }
+    );
+    html5QrcodeScanner.render(onScanSuccess);
   </script>
 </body>
 </html>
+
+
 
