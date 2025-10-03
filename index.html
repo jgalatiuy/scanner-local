@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Scanner Test</title>
-  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+  <!-- Librería html5-qrcode (forzado con ?v=1 para evitar cache) -->
+  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js?v=1"></script>
 </head>
 <body>
   <h3>Prueba de cámara</h3>
@@ -15,6 +16,7 @@
       alert("Código leído: " + decodedText);
     }
 
+    // Crear y renderizar el escáner
     let html5QrcodeScanner = new Html5QrcodeScanner(
       "reader", { fps: 10, qrbox: 250 }
     );
