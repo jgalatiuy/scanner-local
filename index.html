@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Escanear código</title>
-  <!-- La librería va SIEMPRE antes de usar Html5QrcodeScanner -->
+  <title>Escáner de barras</title>
+  <!-- Importante: la librería se carga primero -->
   <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
 </head>
 <body>
@@ -12,17 +12,25 @@
   <div id="reader" style="width:300px; margin:auto;"></div>
 
   <script>
+    // Confirmar que la librería cargó
+    console.log("Html5QrcodeScanner =", typeof Html5QrcodeScanner);
+
     function onScanSuccess(decodedText, decodedResult) {
-      alert("Código leído: " + decodedText);
+      alert("Leído: " + decodedText);
     }
 
-    // Recién acá usamos la clase, cuando ya cargó
-let html5QrcodeScanner = new Html5QrcodeScanner(
-  "reader",
-  { fps: 10, qrbox: 250, formatsToSupport: [ Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.UPC_A ] }
-);
-
-    html5QrcodeScanner.render(onScanSuccess);
+    // Crear el scanner solo cuando la librería ya está
+    window.addEventListener("load", () => {
+      let html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader",
+        { fps: 10, qrbox: 250, formatsToSupport: [
+            Html5QrcodeSupportedFormats.CODE_128,
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.UPC_A
+        ] }
+      );
+      html5QrcodeScanner.render(onScanSuccess);
+    });
   </script>
 </body>
 </html>
