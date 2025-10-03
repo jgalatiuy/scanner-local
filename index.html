@@ -2,17 +2,24 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Scanner Test</title>
   <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
 </head>
 <body>
+  <h3>Prueba de cámara</h3>
   <div id="reader" style="width:300px"></div>
+
   <script>
-    const scanner = new Html5Qrcode("reader");
-    scanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 },
-      (text)=>{ alert("Leído: " + text); },
-      (err)=>{ console.log(err); }
-    );
+    function onScanSuccess(decodedText, decodedResult) {
+      alert("Código leído: " + decodedText);
+    }
+
+    let html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess);
   </script>
 </body>
 </html>
+
 
