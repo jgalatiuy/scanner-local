@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Escanear código</title>
-  <!-- Librería desde unpkg con versión fija -->
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
     body {
@@ -16,6 +15,7 @@
       width: 100%;
       max-width: 420px;
       margin: 20px auto;
+      display: none; /* oculto hasta que inicie */
     }
     button {
       background: #3366ff;
@@ -39,7 +39,6 @@
   <div id="reader"></div>
 
   <script>
-    // Usar return del querystring o fijo a /feria/Default.aspx
     const params = new URLSearchParams(window.location.search);
     const returnUrl = params.get("return") || "http://192.168.4.104/feria/Default.aspx";
 
@@ -47,6 +46,7 @@
     let running = false;
 
     document.getElementById("btnStart").addEventListener("click", function () {
+      document.getElementById("reader").style.display = "block"; // mostrar área del lector
       if (!scanner) {
         scanner = new Html5Qrcode("reader");
       }
@@ -67,7 +67,7 @@
           window.location.href = returnUrl + sep + "codigo=" + encodeURIComponent(decodedText);
         },
         (errorMessage) => {
-          // errores de lectura se pueden ignorar
+          // errores de lectura se ignoran
         }
       ).then(() => {
         running = true;
@@ -78,9 +78,13 @@
 
     function stopScanner() {
       if (scanner && running) {
-        scanner.stop().then(() => { running = false; });
+        scanner.stop().then(() => {
+          running = false;
+          document.getElementById("reader").style.display = "none";
+        });
       }
     }
   </script>
 </body>
 </html>
+
